@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "681742280458",
+    "firebase_url": "https://irc-prelim.firebaseio.com",
+    "project_id": "irc-prelim",
+    "storage_bucket": "irc-prelim.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681742280458:android:e559ac9f534fc2a75f7cf3",
+        "android_client_info": {
+          "package_name": "avishkaar.irc_prelim"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681742280458-1rhfr9uruec11eitlnmcuimfgc8f1ree.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvt9zq-1dGerXolxPlBkxmmSTy22IlFL8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681742280458-1rhfr9uruec11eitlnmcuimfgc8f1ree.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

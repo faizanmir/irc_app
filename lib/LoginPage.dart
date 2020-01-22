@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class ControlInterface {
-  _changeForLoading();
+  _changeUiForLoading();
   _errorOccurred();
 }
 
@@ -18,7 +19,12 @@ class _LoginPageState extends State<LoginPage> implements ControlInterface {
   final _passwordTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String _email, _password;
+  final firebaseAuth = FirebaseAuth.instance;
 
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +82,15 @@ class _LoginPageState extends State<LoginPage> implements ControlInterface {
                                     1,
                                     _emailTextController,
                                     this),
-                                UserFormFields("Password", Icon(Icons.lock),
-                                    true, 0, _passwordTextController, this)
+                                UserFormFields(
+                                    "Password",
+                                    Icon(Icons.lock,
+                                        color:
+                                            Color.fromARGB(255, 149, 208, 158)),
+                                    true,
+                                    0,
+                                    _passwordTextController,
+                                    this)
                               ],
                             ),
                           )
@@ -108,34 +121,43 @@ class _LoginPageState extends State<LoginPage> implements ControlInterface {
   }
 
   @override
-  _changeForLoading() {
+  _changeUiForLoading() {
     setState(() {
       _height = 425;
       _isLoading = true;
-      if(_formKey.currentState.validate())
-        {
-         _email  =  _emailTextController.text;
-         _password =  _passwordTextController.text;
-         doFirebaseLogin(_email, _password);
-        }
+      if (_formKey.currentState.validate()) {
+        _email = _emailTextController.text;
+        _password = _passwordTextController.text;
+        doFirebaseLogin(_email, _password);
+      }
     });
-
-
-
-
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _emailTextController.dispose();
+    _passwordTextController.dispose();
+  }
 
-  doFirebaseLogin(String email,String password){
-    //This code was for testing purpose ,Firebase integration needs to be done here
-    Future.delayed(Duration(seconds: 5)).then((value) {
+  doFirebaseLogin(String email, String password) async {
+    try {
+      AuthResult result = await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (result.user != null) {
+        print("Logged in with id ${result.user.email}");
+        setState(() {
+          _height = 450;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print(e.toString());
       setState(() {
-        _height =450;
         _isLoading = false;
+        _height = 450;
       });
-
-    });
-
+    }
   }
 
   @override
@@ -165,9 +187,9 @@ class _LoginLoaderState extends State<LoginLoader> {
 }
 
 class LoginButton extends StatefulWidget {
-  bool isLoading = false;
-  double height;
-  ControlInterface mListener;
+  final bool isLoading;
+  final double height;
+  final ControlInterface mListener;
   LoginButton(this.isLoading, this.height, this.mListener);
 
   @override
@@ -184,9 +206,9 @@ class _LoginButtonState extends State<LoginButton> {
         elevation: 10,
         color: Color.fromARGB(255, 149, 208, 158),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        child: GestureDetector(
+        child: InkWell(
           onTap: () {
-            widget.mListener._changeForLoading();
+            widget.mListener._changeUiForLoading();
           },
           child: Center(
               child: Text(
@@ -224,8 +246,9 @@ class _UserFormFieldsState extends State<UserFormFields> {
   final String text;
   final Icon icon;
   bool isObscure;
-  int detectEmailOrPassword;// 0 for password 1 for email
-  _UserFormFieldsState(this.text, this.icon, this.isObscure, this.detectEmailOrPassword);
+  int detectEmailOrPassword; // 0 for password 1 for email
+  _UserFormFieldsState(
+      this.text, this.icon, this.isObscure, this.detectEmailOrPassword);
 
   @override
   Widget build(BuildContext context) {
@@ -261,6 +284,9 @@ class _UserFormFieldsState extends State<UserFormFields> {
               borderRadius: BorderRadius.circular(5),
               borderSide:
                   BorderSide(color: Color.fromARGB(255, 149, 208, 158))),
+          focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5),
+              borderSide: BorderSide(color: Colors.blue)),
           prefixIcon: icon,
           suffixIcon: IconButton(
             icon: Icon(
