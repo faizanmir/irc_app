@@ -127,11 +127,13 @@ class _LoginPageState extends State<LoginPage> implements ControlInterface {
 
 
   doFirebaseLogin(String email,String password){
+    //This code was for testing purpose ,Firebase integration needs to be done here
     Future.delayed(Duration(seconds: 5)).then((value) {
       setState(() {
         _height =450;
         _isLoading = false;
       });
+
     });
 
   }
