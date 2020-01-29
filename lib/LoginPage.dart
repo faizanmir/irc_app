@@ -11,111 +11,120 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> implements ControlInterface {
-  double _height = 450;
-  double _width = 450;
+class _LoginPageState extends State<LoginPage>
+    with TickerProviderStateMixin
+    implements ControlInterface {
+  double _height = 450.0;
+  double _width = 450.0;
   bool _isLoading = false;
   final _emailTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String _email, _password;
   final firebaseAuth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  int orientation;
 
   @override
   Widget build(BuildContext context) {
-    print(_isLoading);
+    if (MediaQuery.of(context).orientation == Orientation.landscape) {
+      orientation = 1;
+    } else {
+      orientation = 0;
+    }
+
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-            Color.fromARGB(255, 0, 26, 71),
-            Color.fromARGB(255, 149, 208, 158)
-          ], begin: Alignment.center, end: Alignment(2.0, 1.5)),
-        ),
-        child: Center(
-          child: AnimatedContainer(
-              duration: Duration(seconds: 1),
-              curve: Curves.easeOutCubic,
-              height: _height,
-              width: _width,
-              margin: EdgeInsets.all(10),
-              child: Card(
-                color: Color.fromARGB(255, 253, 253, 253),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                child: Stack(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.all(15.0),
-                            child: Align(
-                              child: Text(
-                                "Please log into your account.",
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 40),
+        body: (orientation == 0) ? body(20, 10, 10) : body(10, 7, 7));
+  }
+
+  Widget body(double sizedBoxHeight, double margin, double paddingForText) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          Color.fromARGB(255, 0, 26, 71),
+          Color.fromARGB(255, 149, 208, 158)
+        ], begin: Alignment.center, end: Alignment(2.0, 1.5)),
+      ),
+      child: Center(
+        child: AnimatedContainer(
+            duration: Duration(seconds: 1),
+            curve: Curves.easeOutCubic,
+            height: _height,
+            width: _width,
+            margin: EdgeInsets.all(margin),
+            child: Card(
+              color: Color.fromARGB(255, 253, 253, 253),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              child: Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.all(paddingForText),
+                          child: Align(
+                            child: Text(
+                              "Please log into your account.",
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 40),
+                            ),
+                            alignment: Alignment.topLeft,
+                          ),
+                        ),
+                        SizedBox(
+                          height: sizedBoxHeight,
+                        ),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: <Widget>[
+                              UserFormFields(
+                                  "E-mail",
+                                  Icon(
+                                    Icons.email,
+                                    color: Color.fromARGB(255, 149, 208, 158),
+                                  ),
+                                  false,
+                                  1,
+                                  _emailTextController,
+                                  this),
+                              UserFormFields(
+                                  "Password",
+                                  Icon(Icons.lock,
+                                      color:
+                                          Color.fromARGB(255, 149, 208, 158)),
+                                  true,
+                                  0,
+                                  _passwordTextController,
+                                  this)
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: sizedBoxHeight,
+                  ),
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: (_isLoading)
+                            ? LoginLoader()
+                            : LoginButton(
+                                _isLoading,
+                                _height,
+                                this,
                               ),
-                              alignment: Alignment.topLeft,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                UserFormFields(
-                                    "E-mail",
-                                    Icon(
-                                      Icons.email,
-                                      color: Color.fromARGB(255, 149, 208, 158),
-                                    ),
-                                    false,
-                                    1,
-                                    _emailTextController,
-                                    this),
-                                UserFormFields(
-                                    "Password",
-                                    Icon(Icons.lock,
-                                        color:
-                                            Color.fromARGB(255, 149, 208, 158)),
-                                    true,
-                                    0,
-                                    _passwordTextController,
-                                    this)
-                              ],
-                            ),
-                          )
-                        ],
                       ),
                     ),
-                    Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: (_isLoading)
-                              ? LoginLoader()
-                              : LoginButton(
-                                  _isLoading,
-                                  _height,
-                                  this,
-                                ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              )),
-        ),
+                  )
+                ],
+              ),
+            )),
       ),
     );
   }
