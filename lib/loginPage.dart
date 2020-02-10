@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'modelClassesForEvent.dart';
+import 'gradients.dart';
+import 'profilePage.dart';
+import 'chooseEventScreen.dart';
 
 abstract class ControlInterface {
   _changeUiForLoading();
@@ -17,12 +22,12 @@ class _LoginPageState extends State<LoginPage>
   double _height = 450.0;
   double _width = 450.0;
   bool _isLoading = false;
-  final _emailTextController = TextEditingController();
-  final _passwordTextController = TextEditingController();
+  final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String _email, _password;
+  String _email;
   final firebaseAuth = FirebaseAuth.instance;
   int orientation;
+  bool found = false;
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +38,13 @@ class _LoginPageState extends State<LoginPage>
     }
 
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: (orientation == 0) ? body(20, 10, 10) : body(10, 7, 7));
   }
 
   Widget body(double sizedBoxHeight, double margin, double paddingForText) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          Color.fromARGB(255, 0, 26, 71),
-          Color.fromARGB(255, 149, 208, 158)
-        ], begin: Alignment.center, end: Alignment(2.0, 1.5)),
-      ),
+      decoration: appGradient,
       child: Center(
         child: AnimatedContainer(
             duration: Duration(seconds: 1),
@@ -80,24 +81,15 @@ class _LoginPageState extends State<LoginPage>
                           child: Column(
                             children: <Widget>[
                               UserFormFields(
-                                  "E-mail",
+                                  "Email",
                                   Icon(
                                     Icons.email,
                                     color: Color.fromARGB(255, 149, 208, 158),
                                   ),
                                   false,
                                   1,
-                                  _emailTextController,
+                                  _emailController,
                                   this),
-                              UserFormFields(
-                                  "Password",
-                                  Icon(Icons.lock,
-                                      color:
-                                          Color.fromARGB(255, 149, 208, 158)),
-                                  true,
-                                  0,
-                                  _passwordTextController,
-                                  this)
                             ],
                           ),
                         )
@@ -135,26 +127,33 @@ class _LoginPageState extends State<LoginPage>
       _height = 425;
       _isLoading = true;
       if (_formKey.currentState.validate()) {
-        _email = _emailTextController.text;
-        _password = _passwordTextController.text;
-        doFirebaseLogin(_email, _password);
+        _email = _emailController.text;
+        doFirebaseQuery(
+          _email,
+        );
       }
     });
   }
 
   @override
   void dispose() {
+    _emailController.dispose();
     super.dispose();
-    _emailTextController.dispose();
-    _passwordTextController.dispose();
+
   }
 
-  doFirebaseLogin(String email, String password) async {
+  doFirebaseQuery(String email) async {
     try {
-      AuthResult result = await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-      if (result.user != null) {
-        print("Logged in with id ${result.user.email}");
+      QuerySnapshot qs = await Firestore.instance.collection("event").where("employeeIdEmailList",arrayContains: email).getDocuments();
+      (qs.documents.length>0)?found = true:found =false;
+      if (found) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => ShowEventsScreen(email)));
+      }
+
+      if (email.length != null) {
         setState(() {
           _height = 450;
           _isLoading = false;
@@ -168,6 +167,7 @@ class _LoginPageState extends State<LoginPage>
       });
     }
   }
+
 
   @override
   _errorOccurred() {
@@ -265,15 +265,9 @@ class _UserFormFieldsState extends State<UserFormFields> {
       margin: EdgeInsets.all(10),
       child: TextFormField(
         validator: (value) {
-          if (value.isEmpty && detectEmailOrPassword == 0) {
+          if (value.isEmpty) {
             widget.mListener._errorOccurred();
-            return "Please enter a password ";
-          } else if (!value.contains("@") && detectEmailOrPassword == 1) {
-            widget.mListener._errorOccurred();
-            return "Invalid Email address";
-          } else if (value.length < 6 && detectEmailOrPassword == 0) {
-            widget.mListener._errorOccurred();
-            return "Password should be greater than 6 characters";
+            return "Please enter a valid employee ID ";
           }
           return null;
         },
