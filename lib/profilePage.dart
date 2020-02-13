@@ -181,7 +181,7 @@ class _ShowTeamInfoDialogState extends State<ShowTeamInfoDialog> {
                 );
               } else if (snapshot.connectionState == ConnectionState.done) {
                 DocumentSnapshot documentSnapshot = snapshot.data;
-                var ref = Status.FromMap(documentSnapshot.data);
+                var ref = Status.fromMap(documentSnapshot.data);
                 return Container(
                   height: 60,
                   child: Column(

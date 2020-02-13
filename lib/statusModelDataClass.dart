@@ -1,4 +1,4 @@
-class Status{
+class Status {
   final bool registration;
   final bool verification;
   final bool collection;
@@ -6,9 +6,9 @@ class Status{
 
   Status(this.registration, this.verification, this.collection, this.arenaRun);
 
-  factory Status.FromMap(Map<String,dynamic> map )
-  {
+  factory Status.fromMap(Map<String, dynamic> map) {
     print(map);
-    return Status(map['registration'],map['verification'],map['collection'],map['run']);
+    return Status(map['registration'], map['verification'], map['collection'],
+        map['run']);
   }
 }

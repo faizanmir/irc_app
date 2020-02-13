@@ -115,7 +115,7 @@ class _SelectEventBodyState extends State<SelectEventBody> {
             Container(
               margin: EdgeInsets.all(10),
               child: Text(
-                "Please choose an event to continue",
+                "Choose an event",
                 style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.w200,
@@ -262,7 +262,7 @@ class _EventChosenButtonState extends State<EventChosenButton>
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async {
+      onTap: () {
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -291,5 +291,4 @@ class _EventChosenButtonState extends State<EventChosenButton>
               borderRadius: borderRadiusAnimation.value)),
     );
   }
-
 }
