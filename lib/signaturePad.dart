@@ -1,13 +1,15 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
-import 'gradients.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'constants.dart';
+import 'modelClasses.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class SignaturePainter extends CustomPainter {
   Paint _paint;
@@ -32,6 +34,9 @@ class SignaturePainter extends CustomPainter {
 }
 
 class Signature extends StatefulWidget {
+  final Team team;
+  final Map<String,dynamic> resultMap;
+  Signature(this.team, this.resultMap);
   SignatureState createState() => new SignatureState();
 }
 
@@ -40,9 +45,11 @@ class SignatureState extends State<Signature> implements ClearScreen {
   Paint backgroundPaint, foregroundPaint;
   GlobalKey globalKey = GlobalKey();
   SignaturePainter signaturePainter;
+  StorageReference storageReference;
 
   @override
   void initState() {
+
     backgroundPaint = new Paint()
       ..color = Colors.white
       ..strokeCap = StrokeCap.round
@@ -119,7 +126,6 @@ class SignatureState extends State<Signature> implements ClearScreen {
     Canvas canvas = new Canvas(recorder);
     try {
       signaturePainter.paint(canvas, Size.infinite);
-      print(canvas.hashCode);
       ui.Picture p = recorder.endRecording();
       ui.Image image = await p.toImage(
           MediaQuery.of(context).size.width.toInt(),
@@ -129,15 +135,33 @@ class SignatureState extends State<Signature> implements ClearScreen {
       print(byteData.buffer.asUint8List());
       var external = await getExternalStorageDirectory();
       String path = external.path;
-      File file =
-          new File("$path/image-${DateTime.now().millisecondsSinceEpoch}.png");
-      await file.writeAsBytes(byteData.buffer.asUint8List()).then((onValue) {
-        print(onValue);
+      File file = File("$path/image-${DateTime.now().millisecondsSinceEpoch}.png");
+      await file.writeAsBytes(byteData.buffer.asUint8List());
+      storageReference = FirebaseStorage.instance.ref().child(DateTime.now().millisecondsSinceEpoch.toString());
+      StorageUploadTask uploadTask = storageReference.putFile(file);
+      final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
+      final String url = (await downloadUrl.ref.getDownloadURL());
+      print('URL Is $url');
+      var id =  DateTime.now().millisecondsSinceEpoch.toString();
+      Map<String,dynamic> rMap = new Map();
+      List<Map<String,dynamic>> qRList = new List();
+      print(widget.resultMap);
+      widget.resultMap.forEach((k,v){
+        Map<String,double> map = new Map();
+        map[k] =v;
+        qRList.add(map);
+        print("Printing list /./.$qRList");
       });
-    } catch (exception) {
-      print(canvas.hashCode);
-      print("Exception Thrown $exception");
+      rMap['resultList']  = qRList;
+      rMap["tid"] = widget.team.tid;
+      rMap['teamName'] = widget.team.teamName;
+      rMap["resultId"] = id;
+      rMap['level'] = widget.team.level;
+      rMap['url'] = url;
 
+     await Firestore.instance.collection("results").document(id).setData(rMap);
+    } catch (exception) {
+      print(exception);
       Fluttertoast.showToast(
           msg: "Something went wrong,try resubmitting",
           toastLength: Toast.LENGTH_SHORT,
@@ -146,6 +170,9 @@ class SignatureState extends State<Signature> implements ClearScreen {
           backgroundColor: Colors.blueGrey.shade500,
           textColor: Colors.white,
           fontSize: 16.0);
+
+
+
       setState(() {});
     }
   }
@@ -200,4 +227,7 @@ class Button extends StatelessWidget {
       ),
     );
   }
+
+
+
 }

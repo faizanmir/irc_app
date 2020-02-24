@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'modelClassesForEvent.dart';
-import 'gradients.dart';
-import 'profilePage.dart';
-import 'chooseEventScreen.dart';
 
+import 'constants.dart';
+import 'chooseLeagueScreen.dart';
 abstract class ControlInterface {
   _changeUiForLoading();
   _errorOccurred();
@@ -139,18 +137,20 @@ class _LoginPageState extends State<LoginPage>
   void dispose() {
     _emailController.dispose();
     super.dispose();
-
   }
 
   doFirebaseQuery(String email) async {
     try {
-      QuerySnapshot qs = await Firestore.instance.collection("event").where("employeeIdEmailList",arrayContains: email).getDocuments();
-      (qs.documents.length>0)?found = true:found =false;
+      QuerySnapshot qs = await Firestore.instance
+          .collection("event")
+          .where("employeeIdEmailList", arrayContains: email)
+          .getDocuments();
+      (qs.documents.length > 0) ? found = true : found = false;
       if (found) {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => ShowEventsScreen(email)));
+                builder: (BuildContext context) => ChooseLeagueScreen(email)));
       }
 
       if (email.length != null) {
@@ -167,7 +167,6 @@ class _LoginPageState extends State<LoginPage>
       });
     }
   }
-
 
   @override
   _errorOccurred() {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'loginPage.dart';
-import 'dropDownFromFirebase.dart';
 import 'profilePage.dart';
-import 'signaturePadTest.dart';
-import 'package:irc_prelim/dynamicallyAddingWidgets.dart';
-import 'signatures.dart';
+import 'signaturePad.dart';
+import 'eventRunSheet.dart';
+import'chiefRefereeScreen.dart';
+import 'chooseLeagueScreen.dart';
 void main() => runApp(MaterialApp(
-  home:Signature(),
+  home: ScoringScreen("1582523156317"),
 ));
 

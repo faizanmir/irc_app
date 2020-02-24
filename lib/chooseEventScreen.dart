@@ -2,21 +2,21 @@ import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'gradients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'modelClassesForEvent.dart';
+import 'package:irc_prelim/eventRunSheet.dart';
+import 'modelClasses.dart';
 import 'profilePage.dart';
 import 'constants.dart';
+import 'chiefRefereeScreen.dart';
 
-class ShowEventsScreen extends StatefulWidget {
-  final String employeeEmail;
-
-  const ShowEventsScreen(this.employeeEmail);
+class ChooseEventsScreen extends StatefulWidget {
+  final String leagueId, employeeEmail;
+  const ChooseEventsScreen(this.leagueId, this.employeeEmail);
   @override
-  _ShowEventsScreenState createState() => _ShowEventsScreenState();
+  _ChooseEventsScreenState createState() => _ChooseEventsScreenState();
 }
 
-class _ShowEventsScreenState extends State<ShowEventsScreen> {
+class _ChooseEventsScreenState extends State<ChooseEventsScreen> {
   var employeeForEvent;
 
   @override
@@ -26,6 +26,7 @@ class _ShowEventsScreenState extends State<ShowEventsScreen> {
         future: Firestore.instance
             .collection("event")
             .where("employeeIdEmailList", arrayContains: widget.employeeEmail)
+            .where("leagueId", isEqualTo: widget.leagueId)
             .getDocuments(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -56,7 +57,7 @@ class _ShowEventsScreenState extends State<ShowEventsScreen> {
 
 class SelectEventBody extends StatefulWidget {
   final QuerySnapshot qs;
-  final ShowEventsScreen widget;
+  final ChooseEventsScreen widget;
 
   const SelectEventBody(this.qs, this.widget);
 
@@ -65,7 +66,7 @@ class SelectEventBody extends StatefulWidget {
 }
 
 class _SelectEventBodyState extends State<SelectEventBody> {
-  EmployeeMapForEvent employeeMapForEvent;
+  ParticipatingEmployee employeeMapForEvent;
   EventChosenButton eventChosenButton;
   EventLoadingState eventLoadingState = EventLoadingState.NOT_SELECTED;
 
@@ -97,16 +98,22 @@ class _SelectEventBodyState extends State<SelectEventBody> {
         child: Column(
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
+                  width: 300,
                   margin: EdgeInsets.all(10),
                   child: Center(
-                    child: Text(
-                      "Hello ${widget.widget.employeeEmail} !",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: 30,
-                          color: Colors.white),
+                    child: RichText(
+                      strutStyle: StrutStyle(),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      text: TextSpan(
+                          text: "Hello !",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w300,
+                            fontSize: 30,
+                          )),
                     ),
                   ),
                 )
@@ -158,7 +165,7 @@ class _SelectEventBodyState extends State<SelectEventBody> {
                                   isEqualTo: widget.widget.employeeEmail)
                               .getDocuments();
                           employeeMapForEvent = querySnapshot.documents
-                              .map((f) => EmployeeMapForEvent.fromMap(f.data))
+                              .map((f) => ParticipatingEmployee.fromMap(f.data))
                               .first;
                           setState(() {
                             eventLoadingState = EventLoadingState.DONE_LOADING;
@@ -212,7 +219,7 @@ abstract class OnEventSelected {
 }
 
 class EventChosenButton extends StatefulWidget {
-  final EmployeeMapForEvent employee;
+  final ParticipatingEmployee employee;
   EventChosenButton(this.employee);
 
   @override
@@ -263,15 +270,17 @@ class _EventChosenButtonState extends State<EventChosenButton>
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => ProfilePage(
-                    widget.employee.employeeId,
-                    widget.employee.role,
-                    widget.employee.name,
-                    widget.employee.eventId,
-                    widget.employee.email)));
+        if (widget.employee.isChiefReferee) {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  ChiefRefereeScreen(widget.employee)));
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      ProfilePage(widget.employee)));
+        }
       },
       child: Container(
           margin: EdgeInsets.all(10),
