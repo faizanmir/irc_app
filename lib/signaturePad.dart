@@ -35,7 +35,7 @@ class SignaturePainter extends CustomPainter {
 
 class Signature extends StatefulWidget {
   final Team team;
-  final Map<String,dynamic> resultMap;
+  final Map<String, dynamic> resultMap;
   Signature(this.team, this.resultMap);
   SignatureState createState() => new SignatureState();
 }
@@ -49,7 +49,6 @@ class SignatureState extends State<Signature> implements ClearScreen {
 
   @override
   void initState() {
-
     backgroundPaint = new Paint()
       ..color = Colors.white
       ..strokeCap = StrokeCap.round
@@ -122,9 +121,11 @@ class SignatureState extends State<Signature> implements ClearScreen {
 
   @override
   void performProceedTapAction() async {
+    ProgressBar progressBar = ProgressBar();
     ui.PictureRecorder recorder = ui.PictureRecorder();
     Canvas canvas = new Canvas(recorder);
     try {
+      showDialog(context: context, builder: (con) => progressBar);
       signaturePainter.paint(canvas, Size.infinite);
       ui.Picture p = recorder.endRecording();
       ui.Image image = await p.toImage(
@@ -135,31 +136,35 @@ class SignatureState extends State<Signature> implements ClearScreen {
       print(byteData.buffer.asUint8List());
       var external = await getExternalStorageDirectory();
       String path = external.path;
-      File file = File("$path/image-${DateTime.now().millisecondsSinceEpoch}.png");
+      File file =
+          File("$path/image-${DateTime.now().millisecondsSinceEpoch}.png");
       await file.writeAsBytes(byteData.buffer.asUint8List());
-      storageReference = FirebaseStorage.instance.ref().child(DateTime.now().millisecondsSinceEpoch.toString());
+      storageReference = FirebaseStorage.instance
+          .ref()
+          .child(DateTime.now().millisecondsSinceEpoch.toString());
       StorageUploadTask uploadTask = storageReference.putFile(file);
       final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
       final String url = (await downloadUrl.ref.getDownloadURL());
       print('URL Is $url');
-      var id =  DateTime.now().millisecondsSinceEpoch.toString();
-      Map<String,dynamic> rMap = new Map();
-      List<Map<String,dynamic>> qRList = new List();
+      var id = DateTime.now().millisecondsSinceEpoch.toString();
+      Map<String, dynamic> rMap = new Map();
+      List<Map<String, dynamic>> qRList = new List();
       print(widget.resultMap);
-      widget.resultMap.forEach((k,v){
-        Map<String,double> map = new Map();
-        map[k] =v;
+      widget.resultMap.forEach((k, v) {
+        Map<String, double> map = new Map();
+        map[k] = v;
         qRList.add(map);
         print("Printing list /./.$qRList");
       });
-      rMap['resultList']  = qRList;
+      rMap['resultList'] = qRList;
       rMap["tid"] = widget.team.tid;
       rMap['teamName'] = widget.team.teamName;
       rMap["resultId"] = id;
       rMap['level'] = widget.team.level;
       rMap['url'] = url;
-
-     await Firestore.instance.collection("results").document(id).setData(rMap);
+      await Firestore.instance.collection("results").document(id).setData(rMap);
+      Navigator.of(context, rootNavigator: true).pop(true);
+      Navigator.of(context).pop();
     } catch (exception) {
       print(exception);
       Fluttertoast.showToast(
@@ -170,10 +175,6 @@ class SignatureState extends State<Signature> implements ClearScreen {
           backgroundColor: Colors.blueGrey.shade500,
           textColor: Colors.white,
           fontSize: 16.0);
-
-
-
-      setState(() {});
     }
   }
 
@@ -227,7 +228,25 @@ class Button extends StatelessWidget {
       ),
     );
   }
+}
 
+class ProgressBar extends StatefulWidget {
+  const ProgressBar();
+  _ProgressBarState createState() => _ProgressBarState();
+}
 
-
+class _ProgressBarState extends State<ProgressBar> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+            height: 100,
+            width: 100,
+            child: Center(
+                child: Container(
+                    height: 50,
+                    width: 50,
+                    child: CircularProgressIndicator()))));
+  }
 }

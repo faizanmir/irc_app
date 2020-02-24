@@ -100,7 +100,7 @@ class _QuestionsPageState extends State<QuestionsPage>
               child: Column(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height / 1.15,
+                    height: 500,
                     child: ListView.builder(
                       itemCount: tempList.length,
                       itemBuilder: (BuildContext context, int index) {
