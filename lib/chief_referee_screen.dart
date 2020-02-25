@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:irc_prelim/signaturePad.dart';
-import 'modelClasses.dart';
+import 'package:irc_prelim/signature_pad.dart';
+import 'model_classes.dart';
 import 'constants.dart' as constants;
 import 'package:expandable/expandable.dart';
 
@@ -34,8 +34,7 @@ class _ChiefRefereeScreenState extends State<ChiefRefereeScreen> {
           style: TextStyle(fontWeight: FontWeight.w300),
         ),
         centerTitle: true,
-        actions: <Widget>[
-        ],
+        actions: <Widget>[],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: this.index,
@@ -71,6 +70,15 @@ class _ChiefRefereeScreenState extends State<ChiefRefereeScreen> {
               color: Colors.white,
             ),
             icon: Icon(FontAwesome5Solid.male),
+          ),
+          BottomNavigationBarItem(
+            backgroundColor: Colors.blue,
+            title: Text("Conflict"),
+            activeIcon: Icon(
+              FontAwesome.user_times,
+              color: Colors.white,
+            ),
+            icon: Icon(FontAwesome5Solid.user_times),
           ),
         ],
       ),

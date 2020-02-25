@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:barcode_scan/barcode_scan.dart';
-import 'package:irc_prelim/eventRunSheet.dart';
-import 'modelClasses.dart';
+import 'package:irc_prelim/event_run_sheet.dart';
+import 'model_classes.dart';
 import 'constants.dart';
 
 class ProfilePage extends StatefulWidget {

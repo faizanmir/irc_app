@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'constants.dart';
-import 'modelClasses.dart';
+import 'model_classes.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class SignaturePainter extends CustomPainter {
@@ -164,7 +164,7 @@ class SignatureState extends State<Signature> implements ClearScreen {
       rMap['url'] = url;
       await Firestore.instance.collection("results").document(id).setData(rMap);
       Navigator.of(context, rootNavigator: true).pop(true);
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } catch (exception) {
       print(exception);
       Fluttertoast.showToast(

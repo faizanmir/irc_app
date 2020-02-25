@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'constants.dart';
-import 'chooseLeagueScreen.dart';
+import 'choose_league_screen.dart';
 abstract class ControlInterface {
   _changeUiForLoading();
   _errorOccurred();

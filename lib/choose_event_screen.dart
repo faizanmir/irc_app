@@ -3,11 +3,11 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:irc_prelim/eventRunSheet.dart';
-import 'modelClasses.dart';
-import 'profilePage.dart';
+import 'package:irc_prelim/event_run_sheet.dart';
+import 'model_classes.dart';
+import 'profile_page.dart';
 import 'constants.dart';
-import 'chiefRefereeScreen.dart';
+import 'chief_referee_screen.dart';
 
 class ChooseEventsScreen extends StatefulWidget {
   final String leagueId, employeeEmail;

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'modelClasses.dart';
+import 'model_classes.dart';
 import 'constants.dart';
-import 'signaturePad.dart';
-
+import 'signature_pad.dart';
+import 'conflict_page.dart';
 
 class ShowResultsScreen extends StatefulWidget {
   final Map<String, dynamic> resultMap;
@@ -55,10 +55,14 @@ class _ShowResultsScreenState extends State<ShowResultsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   print(widget.resultMap);
-                  Navigator.of(context).push(MaterialPageRoute(
+                 var result = await Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => Signature(widget.team,tempMap)));
+                 if(result)
+                   {
+                     Navigator.pop(context,true);
+                   }
                 },
                 child: Container(
                   margin: EdgeInsets.all(10), 
@@ -76,15 +80,24 @@ class _ShowResultsScreenState extends State<ShowResultsScreen> {
                   ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.all(10),
-                height: 60,
-                width: 120,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  color: Colors.deepOrange,
-                  child: Center(child: Text("Conflict",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w300,color: Colors.white),)),
+              GestureDetector(
+                onTap: () async {
+                   var result = await Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => SubmitConflictPage(widget.team)));
+                   if(result)
+                     {
+                       Navigator.pop(context,true);
+                     }
+                },
+                child: Container(
+                  margin: EdgeInsets.all(10),
+                  height: 60,
+                  width: 120,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    color: Colors.deepOrange,
+                    child: Center(child: Text("Conflict",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w300,color: Colors.white),)),
+                  ),
                 ),
               )
             ],

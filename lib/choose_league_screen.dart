@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:irc_prelim/modelClasses.dart';
+import 'package:irc_prelim/model_classes.dart';
 import 'constants.dart';
-import 'chooseEventScreen.dart';
+import 'choose_event_screen.dart';
 class ChooseLeagueScreen extends StatefulWidget {
   final String employeeEmail;
 

@@ -4,8 +4,8 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'constants.dart' as constants;
-import 'modelClasses.dart';
-import 'displayResultToTeam.dart';
+import 'model_classes.dart';
+import 'display_result_to_team.dart';
 
 class ScoringScreen extends StatefulWidget {
   final String scanResult;
@@ -214,8 +214,21 @@ class _QuestionsPageState extends State<QuestionsPage>
                                             children: <Widget>[
                                               Container(
                                                 child: FlatButton(
-                                                  onPressed: () {
+                                                  onPressed: () async {
                                                     _onConfirmation();
+                                                    var result = await Navigator
+                                                            .of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                ShowResultsScreen(
+                                                                    resultMap,
+                                                                    questionMap,
+                                                                    team)));
+                                                    if (result) {
+                                                      Navigator.of(context)
+                                                          .pop(context);
+                                                    }
                                                   },
                                                   child: Text("Yes"),
                                                   color: constants.color,
@@ -291,7 +304,7 @@ class _QuestionsPageState extends State<QuestionsPage>
         });
   }
 
-  _onConfirmation() {
+  _onConfirmation() async {
     if (resultMap.length < tempList.length) {
       tempList.forEach((f) {
         if (!resultMap.containsKey(f.questionId)) {
@@ -299,10 +312,6 @@ class _QuestionsPageState extends State<QuestionsPage>
         }
       });
     }
-
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) =>
-            ShowResultsScreen(resultMap, questionMap, team)));
     print(resultMap);
   }
 
