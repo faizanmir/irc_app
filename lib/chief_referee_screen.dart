@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:irc_prelim/show_conflict_screen.dart';
 import 'model_classes.dart';
 import 'constants.dart' as constants;
 import 'package:expandable/expandable.dart';
@@ -269,7 +270,7 @@ class _ConflictDetailForChiefRefereeState
                       elevation: 5,
                       child: ListTile(
                           onTap: (){
-
+                            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) =>ShowConflictDetails(list[index])));
                           },
                           title: Text(
                         list[index].conflictCause,
