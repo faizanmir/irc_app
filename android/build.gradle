@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.google.gms:google-services:4.3.3'
     }
@@ -21,6 +21,7 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }

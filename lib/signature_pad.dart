@@ -162,6 +162,11 @@ class SignatureState extends State<Signature> implements ClearScreen {
       rMap["resultId"] = id;
       rMap['level'] = widget.team.level;
       rMap['url'] = url;
+      print(widget.team.tid);
+      await Firestore.instance
+          .collection("teams")
+          .document(widget.team.tid)
+          .updateData({"run": true});
       await Firestore.instance.collection("results").document(id).setData(rMap);
       Navigator.of(context, rootNavigator: true).pop(true);
       Navigator.of(context).pop(true);

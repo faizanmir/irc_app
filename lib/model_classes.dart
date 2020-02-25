@@ -189,3 +189,10 @@ class Result {
 
   Result(this.question, this.map);
 }
+
+
+class Conflict{
+ final String teamView,refereeView,conflictCause,conflictId,teamId;
+  Conflict(this.teamView, this.refereeView, this.conflictCause, this.conflictId, this.teamId);
+  factory Conflict.fomMap(Map<String,dynamic> map) => Conflict(map['teamView'],map['refereeView'],map['conflictCause'],map['conflictId'],map['teamId']);
+}

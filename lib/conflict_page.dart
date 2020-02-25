@@ -56,15 +56,24 @@ class _SubmitConflictPageState extends State<SubmitConflictPage> {
                     var temp = DateTime.now().millisecondsSinceEpoch.toString();
                     if(key.currentState.validate())
                       {
+                        showDialog(context: context,builder: (context)=>CircularProgressIndicator());
+
                         Map<String,dynamic> map = Map();
                         map['conflictCause'] = causeController.text;
                         map['refereeView'] = refereeController.text;
                         map['teamView'] = teamViewController.text;
+                        map['conflictId'] = temp;
+                        map['teamId'] = widget.team.tid;
+
                         await Firestore.instance.collection('conflicts').document(temp).setData(map);
+
                         Map<String,dynamic> tempMap = Map();
                         tempMap['isConflicted'] = true;
+                        tempMap['run'] =true;
+
                         await Firestore.instance.collection("teams").document(widget.team.tid).updateData(tempMap);
                         Navigator.of(context).pop(true);
+                        Navigator.of(context,rootNavigator: false).pop();
                       }
 
                   },

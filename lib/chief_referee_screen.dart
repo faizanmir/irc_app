@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:irc_prelim/signature_pad.dart';
 import 'model_classes.dart';
 import 'constants.dart' as constants;
 import 'package:expandable/expandable.dart';
@@ -93,6 +92,7 @@ class _ChiefRefereeScreenState extends State<ChiefRefereeScreen> {
           GetDataForTeams("junior", widget.participatingEmployee),
           GetDataForTeams("middle", widget.participatingEmployee),
           GetDataForTeams("senior", widget.participatingEmployee),
+          ConflictDetailForChiefReferee()
         ],
       ),
     );
@@ -243,5 +243,41 @@ class _GetDataForTeamsState extends State<GetDataForTeams> {
     } else {
       return Colors.blueGrey;
     }
+  }
+}
+
+class ConflictDetailForChiefReferee extends StatefulWidget {
+  @override
+  _ConflictDetailForChiefRefereeState createState() =>
+      _ConflictDetailForChiefRefereeState();
+}
+
+class _ConflictDetailForChiefRefereeState
+    extends State<ConflictDetailForChiefReferee> {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: Firestore.instance.collection("conflicts").snapshots(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          QuerySnapshot qs = snapshot.data;
+          var list = qs.documents.map((t) => Conflict.fomMap(t.data)).toList();
+          return ListView.builder(
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) => Container(
+                  child: Card(
+                      elevation: 5,
+                      child: ListTile(
+                          onTap: (){
+
+                          },
+                          title: Text(
+                        list[index].conflictCause,
+                      )))));
+        }
+
+        return Text("Error");
+      },
+    );
   }
 }

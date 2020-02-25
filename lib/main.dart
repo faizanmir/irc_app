@@ -7,5 +7,5 @@ import 'chief_referee_screen.dart';
 import 'choose_league_screen.dart';
 
 void main() => runApp(MaterialApp(
-      home: ScoringScreen("1582529365353"),
+      home: LoginPage(),
     ));
