@@ -58,7 +58,6 @@ class _QuestionsPageState extends State<QuestionsPage>
 
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder(
         future: getTeam(widget.teamId),
         builder: (context, snapshot) {
@@ -66,7 +65,7 @@ class _QuestionsPageState extends State<QuestionsPage>
               snapshot.connectionState == ConnectionState.done) {
             QuerySnapshot qs = snapshot.data;
             var temp = qs.documents.map((f) => Team.fromMap(f.data)).toList();
-             team = temp.first;
+            team = temp.first;
             return _makeFutureBuilder();
           } else {
             return Center(
