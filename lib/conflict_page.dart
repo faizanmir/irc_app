@@ -56,7 +56,7 @@ class _SubmitConflictPageState extends State<SubmitConflictPage> {
                     var temp = DateTime.now().millisecondsSinceEpoch.toString();
                     if(key.currentState.validate())
                       {
-                        showDialog(context: context,builder: (context)=>CircularProgressIndicator());
+                        showDialog(context: context,builder: (context)=>Container(height:50,width: 50,child: Center(child: CircularProgressIndicator())));
 
                         Map<String,dynamic> map = Map();
                         map['conflictCause'] = causeController.text;
@@ -73,7 +73,7 @@ class _SubmitConflictPageState extends State<SubmitConflictPage> {
 
                         await Firestore.instance.collection("teams").document(widget.team.tid).updateData(tempMap);
                         Navigator.of(context).pop(true);
-                        Navigator.of(context,rootNavigator: false).pop();
+                        Navigator.of(context,rootNavigator: true).pop();
                       }
 
                   },
