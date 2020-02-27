@@ -27,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage> {
       print(e);
     }
 
-    if (widget.employee.isReferee) {
+    if (widget.employee.isReferee && scanResult.isNotEmpty) {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (BuildContext context) => ScoringScreen(scanResult)));
     } else {

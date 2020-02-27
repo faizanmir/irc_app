@@ -73,7 +73,7 @@ class _SubmitConflictPageState extends State<SubmitConflictPage> {
 
                         await Firestore.instance.collection("teams").document(widget.team.tid).updateData(tempMap);
                         Navigator.of(context).pop(true);
-                        Navigator.of(context,rootNavigator: true).pop();
+                        Navigator.of(context,rootNavigator: true).pop(true);
                       }
 
                   },
